@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
-</html>
+<%- include('partials/header') %>
+
+<div style="text-align: center;">
+<h2>Welcome to Ontario Tech Casino</h2>
+<p>Play Blackjack, Ride The Bus, 3-Card Poker and more!</p>
+
+<a href="/login" class="btn">Login</a>
+<a href="/register" class="btn">Create Account</a>
+</div>
+
+<%- include('partials/footer') %>
