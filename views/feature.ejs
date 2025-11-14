@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<div style="text-align: center;">
+<h2>Welcome to Ontario Tech Casino!</h2>
+</div>
+
+<!-- Placeholder balance (later replaced with real DB value) -->
+<div class="wallet-box">
+    <h3>Your Balance:</h3>
+    <p class="wallet-amount">$<%= wallet || 0 %></p>
+</div>
+
+<div class="feature-buttons">
+
+    <!-- Wallet Management -->
+    <a href="/deposit" class="btn wide-btn">Deposit Funds</a>
+    <a href="/withdraw" class="btn wide-btn">Withdraw Funds</a>
+
+    <hr>
+
+    <!-- Game Options -->
+    <h3>Select a Game:</h3>
+
+    <a href="/games/blackjack" class="btn game-btn">Blackjack</a>
+    <a href="#" class="btn game-btn disabled">Ride The Bus (Coming Soon)</a>
+    <a href="#" class="btn game-btn disabled">3 Card Poker (Coming Soon)</a>
+
+</div>
+
+<%- include('partials/footer') %>

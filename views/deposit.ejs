@@ -1,0 +1,52 @@
+<%- include('partials/header') %>
+
+<div style="text-align: center;">
+<h2>Deposit Funds</h2>
+</div>
+
+<form action="/deposit" method="POST" class="deposit-form">
+
+    <!-- CARD NUMBER -->
+    <label for="cardNumber">Card Number</label>
+    <input type="text" id="cardNumber" name="cardNumber" 
+           maxlength="16" 
+           placeholder="XXXX XXXX XXXX XXXX"
+           required>
+
+    <!-- EXPIRATION -->
+    <label for="exp">Expiration Date</label>
+    <input type="text" id="exp" name="exp"
+           maxlength="5"
+           placeholder="MM/YY"
+           required>
+
+    <!-- CVV -->
+    <label for="cvv">CVV</label>
+    <input type="text" id="cvv" name="cvv"
+           maxlength="3"
+           placeholder="XXX"
+           required>
+
+    <!-- AMOUNT SELECT -->
+    <label for="amount">Deposit Amount</label>
+    <select id="amount" name="amount" required>
+        <option value="100">+$100</option>
+        <option value="250">+$250</option>
+        <option value="500">+$500</option>
+        <option value="1000">+$1000</option>
+    </select>
+
+    <button type="submit" class="btn">Confirm Deposit</button>
+
+</form>
+
+<script>
+// Clear the form after submission (front-end only)
+document.querySelector('.deposit-form').addEventListener('submit', function() {
+    setTimeout(() => {
+        this.reset();
+    }, 50);
+});
+</script>
+
+<%- include('partials/footer') %>

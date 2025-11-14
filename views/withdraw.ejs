@@ -1,0 +1,42 @@
+<%- include('partials/header') %>
+
+<h2 class="page-title">Withdraw Funds</h2>
+
+<div class="withdraw-container">
+    <form id="withdraw-form" class="withdraw-form">
+
+        <label>Withdraw Amount</label>
+        <input type="number" min="1" placeholder="$0.00" required id="withdraw-amount">
+
+        <label>Bank Account (fake)</label>
+        <input type="text" maxlength="16" placeholder="xxxx xxxx xxxx xxxx" id="bank-number">
+
+        <label>Routing Number (fake)</label>
+        <input type="text" maxlength="9" placeholder="xxxxxxxxx" id="routing-number">
+
+        <button type="submit" class="btn withdraw-btn">Confirm Withdrawal</button>
+    </form>
+
+    <p id="withdraw-success" class="success-message" style="display:none;">
+        Withdrawal Successful!
+    </p>
+</div>
+
+<script>
+    // Front-end only: clears fields and shows message
+    document.getElementById("withdraw-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        document.getElementById("withdraw-amount").value = "";
+        document.getElementById("bank-number").value = "";
+        document.getElementById("routing-number").value = "";
+
+        document.getElementById("withdraw-success").style.display = "block";
+
+        setTimeout(() => {
+            document.getElementById("withdraw-success").style.display = "none";
+        }, 3000);
+    });
+</script>
+
+<%- include('partials/footer') %>
