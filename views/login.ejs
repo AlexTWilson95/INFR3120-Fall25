@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+
+<div style="text-align: center;">
+<h2>Login</h2>
+</div>
+
+<form action="/login" method="POST" class="auth-form">
+
+  <label for="username">Username</label>
+  <input type="text" id="username" name="username" required>
+
+  <label for="password">Password</label>
+  <input type="password" id="password" name="password" required>
+
+  <button type="submit" class="btn">Login</button>
+
+</form>
+
+<div style="text-align: center;">
+<p>Don't have an account?
+  <a href="/register" class="gold-link">Create One</a>
+</p>
+</div>
+
+<%- include('partials/footer') %>

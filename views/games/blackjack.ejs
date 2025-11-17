@@ -1,0 +1,61 @@
+<%- include('../partials/header') %>
+
+<div style="text-align: center;">
+<h2>Blackjack</h2>
+</div>
+
+<div class="blackjack-table">
+
+    <!-- Dealer Section -->
+    <div class="hand-section">
+        <h3>Dealer</h3>
+        <div class="cards-row">
+
+            <% if (dealerCards && dealerCards.length > 0) { %>
+                <% dealerCards.forEach(card => { %>
+                    <div class="card <%= card.color %>">
+                        <%= card.rank %> <span><%- card.suitHtml %></span>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No cards drawn yet.</p>
+            <% } %>
+
+        </div>
+        <p class="hand-total">Total: <%= dealerTotal || "??" %></p>
+    </div>
+
+    <!-- Player Section -->
+    <div class="hand-section">
+        <h3>You</h3>
+        <div class="cards-row">
+
+            <% if (playerCards && playerCards.length > 0) { %>
+                <% playerCards.forEach(card => { %>
+                    <div class="card <%= card.color %>">
+                        <%= card.rank %> <span><%- card.suitHtml %></span>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p>No cards drawn yet.</p>
+            <% } %>
+
+        </div>
+        <p class="hand-total">Total: <%= playerTotal || "??" %></p>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn hit-btn">Hit</button>
+        <button class="btn stand-btn">Stand</button>
+        <button class="btn restart-btn">Restart</button>
+    </div>
+
+</div>
+<div style="text-align: center;">
+    <a href="/feature/" class="btn">Game Menu</a>
+</div>
+
+
+<%- include('../partials/footer') %>
+
