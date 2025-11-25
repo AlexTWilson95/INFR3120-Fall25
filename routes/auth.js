@@ -63,14 +63,21 @@ router.post("/login", async (req, res) => {
       return res.status(400).send("Invalid username or password.");
     }
 
-    // LOGIN SUCCESS
-    // For this assignment, no sessions yet.
-    // Just redirect to a page (e.g., feature/dashboard)
-    res.redirect("/feature"); // or "/" if you prefer
+    // CREATE SESSION
+    req.session.userId = user._id;
+    req.session.username = user.username;
+    req.session.wallet = user.wallet;  // optional
+
+    console.log("Session after login:", req.session);
+
+    // Redirect to dashboard/feature page
+    res.redirect("/feature/");
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).send("Error logging in.");
   }
 });
+
 
 module.exports = router;
