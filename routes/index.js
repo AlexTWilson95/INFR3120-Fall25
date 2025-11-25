@@ -14,7 +14,7 @@ router.get('/register', (req, res) => {
 });
 
 router.get('/feature', (req, res) => {
-  res.render('feature', { title: 'OnTech Casino Game Menu', wallet: 0  /* placeholder until MongoDB is connected */ });
+  res.render('feature', { title: 'OnTech Casino Game Menu', wallet: req.session.wallet  /* placeholder until MongoDB is connected */ });
 });
 
 router.get('/deposit', (req, res) => {
@@ -31,4 +31,4 @@ router.get('/contact', (req, res) => {
     res.render('contact');
 });
 
-
+module.exports = router;

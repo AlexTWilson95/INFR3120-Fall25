@@ -64,4 +64,12 @@ router.get("/blackjack", (req, res) => {
     });
 });
 
+/* RIDE THE BUS GAME PAGE */
+router.get("/ridethebus", (req, res) => {
+    res.render("games/ridethebus", {
+      title: "Ride the Bus" 
+    });
+});
+
+
 module.exports = router;
