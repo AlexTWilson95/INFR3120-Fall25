@@ -1,0 +1,72 @@
+<%- include('../partials/header') %>
+
+<h2 class="page-title", style="text-align: center;">Ride the Bus</h2>
+
+<div class="blackjack-table"> <!-- reusing BJ table style for consistency -->
+    
+    <!-- Game Instructions -->
+    <div class="hand-section">
+        <p style="color: gold; font-size: 18px;">
+            Guess correctly to climb the multiplier ladder!<br>
+            Red/Black Higher/Lower → Inside/Outside → Suit
+        </p>
+    </div>
+
+    <!-- Current Card Display -->
+    <div class="hand-section">
+        <h3>Current Card</h3>
+        <div class="cards-row">
+            <div class="card">?</div>
+        </div>
+    </div>
+
+    <!-- Guess Section -->
+    <div class="hand-section">
+        <h3>Make Your Guess</h3>
+
+        <!-- STEP 1: Even / Odd -->
+        <div id="step-red-black" class="controls">
+            <button class="btn game-btn">Red</button>
+            <button class="btn game-btn">Black</button>
+        </div>
+
+        <!-- STEP 2: Higher / Lower -->
+        <div id="step-high-low" class="controls" style="display:none;">
+            <button class="btn game-btn">Higher</button>
+            <button class="btn game-btn">Lower</button>
+        </div>
+
+        <!-- STEP 3: Inside / Outside -->
+        <div id="step-in-out" class="controls" style="display:none;">
+            <button class="btn game-btn">Inside</button>
+            <button class="btn game-btn">Outside</button>
+        </div>
+
+        <!-- STEP 4: Guess Suit -->
+        <div id="step-suit" class="controls" style="display:none;">
+            <button class="btn game-btn">&spades; Spades</button>
+            <button class="btn game-btn">&clubs; Clubs</button>
+            <button class="btn game-btn red">&hearts; Hearts</button>
+            <button class="btn game-btn red">&diams; Diamonds</button>
+        </div>
+    </div>
+
+    <!-- Multiplier Display -->
+    <div class="wallet-box" style="margin-top: 30px;">
+        <p style="font-size: 20px;">Current Multiplier</p>
+        <p class="wallet-amount" id="rtb-multiplier">x1</p>
+    </div>
+
+    <!-- Result -->
+    <div id="rtb-result" class="hand-section" style="display:none;">
+        <h3 style="color: gold;">Result</h3>
+        <p id="rtb-message" style="font-size: 20px;"></p>
+    </div>
+
+    <!-- Restart -->
+    <div class="controls">
+        <a href="/games/ridethebus" class="btn restart-btn">Restart</a>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
