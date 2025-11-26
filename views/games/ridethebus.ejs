@@ -8,7 +8,8 @@
     <div class="hand-section">
         <p style="color: gold; font-size: 18px;">
             Guess correctly to climb the multiplier ladder!<br>
-            Red/Black Higher/Lower → Inside/Outside → Suit
+            Red/Black, Higher/Lower, Inside/Outside, Suit  <br>
+            Aces are 11!!
         </p>
     </div>
 
@@ -44,10 +45,10 @@
 
         <!-- STEP 4: Guess Suit -->
         <div id="step-suit" class="controls" style="display:none;">
-            <button class="btn game-btn">&spades; Spades</button>
-            <button class="btn game-btn">&clubs; Clubs</button>
-            <button class="btn game-btn red">&hearts; Hearts</button>
-            <button class="btn game-btn red">&diams; Diamonds</button>
+            <button class="btn game-btn" data-suit="&spades;">&spades; Spades</button>
+            <button class="btn game-btn" data-suit="&clubs;">&clubs; Clubs</button>
+            <button class="btn game-btn red" data-suit="&hearts;">&hearts; Hearts</button>
+            <button class="btn game-btn red" data-suit="&diams;">&diams; Diamonds</button>
         </div>
     </div>
 
@@ -64,9 +65,72 @@
     </div>
 
     <!-- Restart -->
-    <div class="controls">
+    <div class="controls" id="restart-container">
         <a href="/games/ridethebus" class="btn restart-btn">Restart</a>
     </div>
 </div>
+
+</div>
+<div style="text-align: center;">
+    <a href="/feature/" class="btn">Game Menu</a>
+</div>
+
+<script>
+async function sendGuess(guess) {
+  const response = await fetch("/games/ridethebus/guess", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ guess: guess })
+  });
+
+  const data = await response.json();
+  updateUI(data);
+}
+
+// Attach button events
+document.querySelectorAll(".game-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        // For suit buttons, use data-suit; for others, use the text
+        const suitAttr = button.getAttribute("data-suit");
+        const guess = button.getAttribute("data-suit") || button.innerText.trim();
+        sendGuess(guess);
+    });
+});
+
+// Update UI
+function updateUI(data) {
+  const cardDiv = document.querySelector(".cards-row .card");
+  const resultDiv = document.getElementById("rtb-result");
+  const msg = document.getElementById("rtb-message");
+
+  // Show card
+  cardDiv.innerHTML = `${data.card.rank}${data.card.suitHtml}`;
+  cardDiv.className = `card ${data.card.color}`;
+
+  // Update multiplier
+  document.getElementById("rtb-multiplier").innerText = "x" + data.multiplier;
+
+  if (data.gameOver) {
+    resultDiv.style.display = "block";
+    msg.innerText = data.message;
+
+    // Hide ALL guess control groups EXCEPT restart
+    document.querySelectorAll(".controls").forEach(div => {
+        if (div.id !== "restart-container") {
+            div.style.display = "none";
+            }
+    });
+
+    return;
+  }
+
+  // Show next step buttons
+  document.getElementById("step-red-black").style.display = data.step === 1 ? "block" : "none";
+  document.getElementById("step-high-low").style.display = data.step === 2 ? "block" : "none";
+  document.getElementById("step-in-out").style.display = data.step === 3 ? "block" : "none";
+  document.getElementById("step-suit").style.display = data.step === 4 ? "block" : "none";
+}
+</script>
+
 
 <%- include('../partials/footer') %>
