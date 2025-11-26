@@ -4,7 +4,7 @@
 <h2>Deposit Funds</h2>
 </div>
 
-<form action="/deposit" method="POST" class="deposit-form">
+<form action="/wallet/deposit" method="POST" class="deposit-form">
 
     <!-- CARD NUMBER -->
     <label for="cardNumber">Card Number</label>
@@ -41,7 +41,6 @@
 </form>
 
 <script>
-// Clear the form after submission (front-end only)
 document.querySelector('.deposit-form').addEventListener('submit', function() {
     setTimeout(() => {
         this.reset();

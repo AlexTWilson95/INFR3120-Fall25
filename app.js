@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const walletRouter = require("./routes/wallet");
 
 // Connect to MongoDB
 mongoose
@@ -47,6 +48,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/games", gamesRouter);
 app.use("/", authRouter);   // register + login routes
+app.use("/wallet", walletRouter);
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {

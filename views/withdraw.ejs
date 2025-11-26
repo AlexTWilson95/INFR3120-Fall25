@@ -1,20 +1,20 @@
 <%- include('partials/header') %>
 
 <div style="text-align: center;">
-<h2 class="page-title">Withdraw Funds</h2>
+  <h2 class="page-title">Withdraw Funds</h2>
 </div>
 
 <div class="withdraw-container">
-    <form id="withdraw-form" class="withdraw-form">
+    <form id="withdraw-form" class="withdraw-form" action="/wallet/withdraw" method="POST">
 
         <label>Withdraw Amount</label>
-        <input type="number" min="1" placeholder="$0.00" required id="withdraw-amount">
+        <input type="number" min="1" placeholder="$0.00" required name="amount">
 
         <label>Bank Account (fake)</label>
-        <input type="text" maxlength="16" placeholder="xxxx xxxx xxxx xxxx" id="bank-number">
+        <input type="text" maxlength="16" placeholder="xxxx xxxx xxxx xxxx" name="bankNumber">
 
         <label>Routing Number (fake)</label>
-        <input type="text" maxlength="9" placeholder="xxxxxxxxx" id="routing-number">
+        <input type="text" maxlength="9" placeholder="xxxxxxxxx" name="routingNumber">
 
         <button type="submit" class="btn withdraw-btn">Confirm Withdrawal</button>
     </form>
@@ -22,23 +22,19 @@
     <p id="withdraw-success" class="success-message" style="display:none;">
         Withdrawal Successful!
     </p>
+    <p id="withdraw-error" class="error-message" style="color:red; display:none;">
+        Insufficient funds!
+    </p>
 </div>
 
 <script>
-    // Front-end only: clears fields and shows message
-    document.getElementById("withdraw-form").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        document.getElementById("withdraw-amount").value = "";
-        document.getElementById("bank-number").value = "";
-        document.getElementById("routing-number").value = "";
-
-        document.getElementById("withdraw-success").style.display = "block";
-
-        setTimeout(() => {
-            document.getElementById("withdraw-success").style.display = "none";
-        }, 3000);
-    });
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get("success") === "1") {
+      document.getElementById("withdraw-success").style.display = "block";
+  }
+  if (urlParams.get("error") === "1") {
+      document.getElementById("withdraw-error").style.display = "block";
+  }
 </script>
 
 <%- include('partials/footer') %>
