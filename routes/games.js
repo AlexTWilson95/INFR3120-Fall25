@@ -114,8 +114,8 @@ router.post("/ridethebus/guess", async (req, res) => {
 
   // STEP 2 — Higher / Lower
   else if (game.step === 2) {
-    if (guess.toLowerCase() === "higher" && cur.value > prev.value) correct = true;
-    if (guess.toLowerCase() === "lower" && cur.value < prev.value) correct = true;
+    if (guess.toLowerCase() === "higher" && cur.value >= prev.value) correct = true;
+    if (guess.toLowerCase() === "lower" && cur.value <= prev.value) correct = true;
     if (correct) game.multiplier = 3;
   }
 
@@ -124,8 +124,8 @@ router.post("/ridethebus/guess", async (req, res) => {
     let low = Math.min(prev.value, cur.value);
     let high = Math.max(prev.value, cur.value);
 
-    if (guess.toLowerCase() === "inside" && cur.value > low && cur.value < high) correct = true;
-    if (guess.toLowerCase() === "outside" && (cur.value < low || cur.value > high)) correct = true;
+    if (guess.toLowerCase() === "inside" && cur.value >= low && cur.value <= high) correct = true;
+    if (guess.toLowerCase() === "outside" && (cur.value <= low || cur.value >= high)) correct = true;
 
     if (correct) game.multiplier = 4;
   }
