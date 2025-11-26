@@ -14,11 +14,26 @@
     </div>
 
     <!-- Current Card Display -->
-    <div class="hand-section">
+    <div class="hand-section" id="rtb-guess-section" style="display:none;">
         <h3>Current Card</h3>
         <div class="cards-row">
             <div class="card">?</div>
         </div>
+    </div>
+
+    <!-- BETTING SECTION -->
+    <div id="rtb-bet-section" class="hand-section">
+        <h3>Select Your Bet</h3>
+
+        <select id="rtb-bet-amount" class="bet-select">
+        <option value="10">$10</option>
+        <option value="25">$25</option>
+        <option value="50">$50</option>
+        <option value="100">$100</option>
+        <option value="1000">$1000</option>
+        </select>
+
+        <button id="rtb-place-bet" class="btn game-btn">Place Bet</button>
     </div>
 
     <!-- Guess Section -->
@@ -64,11 +79,25 @@
         <p id="rtb-message" style="font-size: 20px;"></p>
     </div>
 
-    <!-- Restart -->
-    <div class="controls" id="restart-container">
-        <a href="/games/ridethebus" class="btn restart-btn">Restart</a>
+    <!-- Restart + Cash Out (side-by-side) -->
+    <div class="controls" id="action-buttons" style="display:flex; justify-content:center; gap:20px; margin-top:20px;">
+    
+        <!-- CASH OUT (hidden at beginning) -->
+        <button id="rtb-cashout" class="btn game-btn" 
+                style="background:#f1c40f; color:black; display:none;">
+            Cash Out
+        </button>
+
+        <!-- RESTART (hidden during game) -->
+        <a href="/games/ridethebus" id="rtb-restart" 
+        class="btn restart-btn" style="display:none;">
+            Restart
+        </a>
+
     </div>
+
 </div>
+
 
 </div>
 <div style="text-align: center;">
@@ -76,61 +105,122 @@
 </div>
 
 <script>
-async function sendGuess(guess) {
-  const response = await fetch("/games/ridethebus/guess", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ guess: guess })
-  });
+// ==========================
+// PLACE BET
+// ==========================
+document.getElementById("rtb-place-bet").addEventListener("click", async () => {
+    const amount = document.getElementById("rtb-bet-amount").value;
 
-  const data = await response.json();
-  updateUI(data);
+    const response = await fetch("/games/ridethebus/bet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bet: amount })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+        alert(data.message);
+        return;
+    }
+
+    // Hide bet section, show guessing section
+    document.getElementById("rtb-bet-section").style.display = "none";
+    document.getElementById("rtb-guess-section").style.display = "block";
+    document.getElementById("rtb-cashout").style.display = "block";
+
+});
+
+// ==========================
+// SEND GUESS
+// ==========================
+async function sendGuess(guess) {
+    const response = await fetch("/games/ridethebus/guess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guess: guess })
+    });
+
+    const data = await response.json();
+    updateUI(data);
 }
 
-// Attach button events
+// ==========================
+// CASH OUT
+// ==========================
+document.getElementById("rtb-cashout").addEventListener("click", async () => {
+
+    const response = await fetch("/games/ridethebus/cashout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+    });
+
+    const data = await response.json();
+
+    updateUI(data); // reuse existing UI system
+});
+
+// ==========================
+// ATTACH BUTTON EVENTS
+// ==========================
 document.querySelectorAll(".game-btn").forEach(button => {
     button.addEventListener("click", () => {
-        // For suit buttons, use data-suit; for others, use the text
+        // Suit buttons use data-suit attribute
         const suitAttr = button.getAttribute("data-suit");
-        const guess = button.getAttribute("data-suit") || button.innerText.trim();
-        sendGuess(guess);
+
+        const guess = suitAttr || button.innerText.trim();
+
+        // Only send guesses AFTER betting
+        if (document.getElementById("rtb-guess-section").style.display !== "none") {
+            sendGuess(guess);
+        }
     });
 });
 
-// Update UI
+// ==========================
+// UPDATE UI AFTER GUESS
+// ==========================
 function updateUI(data) {
-  const cardDiv = document.querySelector(".cards-row .card");
-  const resultDiv = document.getElementById("rtb-result");
-  const msg = document.getElementById("rtb-message");
+    const cardDiv = document.querySelector(".cards-row .card");
+    const resultDiv = document.getElementById("rtb-result");
+    const msg = document.getElementById("rtb-message");
 
-  // Show card
-  cardDiv.innerHTML = `${data.card.rank}${data.card.suitHtml}`;
-  cardDiv.className = `card ${data.card.color}`;
+    // Show card
+    cardDiv.innerHTML = `${data.card.rank}${data.card.suitHtml}`;
+    cardDiv.className = `card ${data.card.color}`;
 
-  // Update multiplier
-  document.getElementById("rtb-multiplier").innerText = "x" + data.multiplier;
+    // Update multiplier display
+    document.getElementById("rtb-multiplier").innerText = "x" + data.multiplier;
 
-  if (data.gameOver) {
-    resultDiv.style.display = "block";
-    msg.innerText = data.message;
+    // ==========================
+    // GAME OVER
+    // ==========================
+    if (data.gameOver) {
+        resultDiv.style.display = "block";
+        msg.innerText = data.message;
+        document.getElementById("rtb-cashout").style.display = "none";
+        document.getElementById("rtb-restart").style.display = "block";
 
-    // Hide ALL guess control groups EXCEPT restart
-    document.querySelectorAll(".controls").forEach(div => {
-        if (div.id !== "restart-container") {
-            div.style.display = "none";
+        // Hide ALL guess control groups EXCEPT restart
+        document.querySelectorAll(".controls").forEach(div => {
+            if (div.id !== "restart-container") {
+                div.style.display = "none";
             }
-    });
+        });
 
-    return;
-  }
+        return; // stop here
+    }
 
-  // Show next step buttons
-  document.getElementById("step-red-black").style.display = data.step === 1 ? "block" : "none";
-  document.getElementById("step-high-low").style.display = data.step === 2 ? "block" : "none";
-  document.getElementById("step-in-out").style.display = data.step === 3 ? "block" : "none";
-  document.getElementById("step-suit").style.display = data.step === 4 ? "block" : "none";
+    // ==========================
+    // SHOW NEXT STEP BUTTONS
+    // ==========================
+    document.getElementById("step-red-black").style.display = data.step === 1 ? "block" : "none";
+    document.getElementById("step-high-low").style.display = data.step === 2 ? "block" : "none";
+    document.getElementById("step-in-out").style.display = data.step === 3 ? "block" : "none";
+    document.getElementById("step-suit").style.display = data.step === 4 ? "block" : "none";
 }
 </script>
+
 
 
 <%- include('../partials/footer') %>

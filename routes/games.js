@@ -1,10 +1,10 @@
 var express = require("express");
 var router = express.Router();
+const User = require("../models/user");
 
-// ===============
+// ===================
 // CARD SYSTEM
-// ===============
-
+// ===================
 const suits = [
   { symbol: "♠", html: "&spades;", color: "black" },
   { symbol: "♣", html: "&clubs;", color: "black" },
@@ -49,91 +49,83 @@ function drawCard(deck) {
   return deck.splice(index, 1)[0];
 }
 
-router.get("/blackjack", (req, res) => {
-    const deck = createDeck();
-
-    const playerCards = [drawCard(deck), drawCard(deck)];
-    const dealerCards = [drawCard(deck), drawCard(deck)];
-
-    res.render("games/blackjack", {
-        title: "Blackjack",
-        playerCards: playerCards,
-        dealerCards: dealerCards,
-        playerTotal: null,
-        dealerTotal: null
-    });
-});
-
-/* RIDE THE BUS GAME PAGE 
+// ==================================
+// START GAME
+// ==================================
 router.get("/ridethebus", (req, res) => {
-    res.render("games/ridethebus", {
-      title: "Ride the Bus" 
-    });
-});
-*/
-/* -------------------------------
-   RIDE THE BUS — BACKEND LOGIC
---------------------------------*/
-
-// Start or reset the game
-router.get("/ridethebus", (req, res) => {
-  // Create fresh deck + draw first card
   const deck = createDeck();
-  const firstCard = drawCard(deck);
+  const first = drawCard(deck);
 
   req.session.rtb = {
     deck: deck,
-    cards: [firstCard],
+    previousCard: first,
     step: 1,
-    multiplier: 1
+    multiplier: 1,
+    bet: 0
   };
 
-  res.render("games/ridethebus", {
-      title: "Ride the Bus" 
-    });
+  res.render("games/ridethebus", { title: "Ride the Bus" });
 });
 
-// Make a guess
-router.post("/ridethebus/guess", (req, res) => {
-  if (!req.session.rtb) {
-    return res.status(400).json({ error: "Game not started." });
+// ==================================
+// PLACE BET
+// ==================================
+router.post("/ridethebus/bet", async (req, res) => {
+  if (!req.session.userId) {
+    return res.json({ success: false, message: "Not logged in." });
   }
 
+  const user = await User.findById(req.session.userId);
+  const bet = Number(req.body.bet);
+
+  if (bet > user.wallet) {
+    return res.json({ success: false, message: "Not enough funds." });
+  }
+
+  user.wallet -= bet;
+  await user.save();
+
+  req.session.rtb.bet = bet;
+  req.session.wallet = user.wallet;
+
+  res.json({ success: true });
+});
+
+// ==================================
+// MAKE A GUESS
+// ==================================
+router.post("/ridethebus/guess", async (req, res) => {
   const game = req.session.rtb;
-  const guess = req.body.guess; // e.g. "Red" / "Higher" / "Inside" / "♠"
+  if (!game) return res.json({ error: "No game." });
 
-  // Draw new card
-  const newCard = drawCard(game.deck);
-  game.cards.push(newCard);
+  const guess = req.body.guess;
+  const prev = game.previousCard;
+  const cur = drawCard(game.deck);
 
-  const prev = game.cards[game.cards.length - 2];  // previous card
-  const cur = newCard;        // current card
+  game.previousCard = cur;
   let correct = false;
 
-  // STEP 1 — Red/Black
+  // STEP 1 — Red / Black
   if (game.step === 1) {
-    if (guess === "Red" && cur.color === "red") correct = true;
-    if (guess === "Black" && cur.color === "black") correct = true;
-
+    if (guess.toLowerCase() === "red" && cur.color === "red") correct = true;
+    if (guess.toLowerCase() === "black" && cur.color === "black") correct = true;
     if (correct) game.multiplier = 2;
   }
 
-  // STEP 2 — Higher/Lower
+  // STEP 2 — Higher / Lower
   else if (game.step === 2) {
-    if (guess === "Higher" && cur.value >= prev.value) correct = true;
-    if (guess === "Lower" && cur.value <= prev.value) correct = true;
-
+    if (guess.toLowerCase() === "higher" && cur.value > prev.value) correct = true;
+    if (guess.toLowerCase() === "lower" && cur.value < prev.value) correct = true;
     if (correct) game.multiplier = 3;
   }
 
-  // STEP 3 — Inside/Outside
+  // STEP 3 — Inside / Outside
   else if (game.step === 3) {
-    const low = Math.min(prev.value, cur.value);
-    const high = Math.max(prev.value, cur.value);
-    const newVal = cur.value;
+    let low = Math.min(prev.value, cur.value);
+    let high = Math.max(prev.value, cur.value);
 
-    if (guess === "Inside" && newVal >= low && newVal <= high) correct = true;
-    if (guess === "Outside" && (newVal <= low || newVal >= high)) correct = true;
+    if (guess.toLowerCase() === "inside" && cur.value > low && cur.value < high) correct = true;
+    if (guess.toLowerCase() === "outside" && (cur.value < low || cur.value > high)) correct = true;
 
     if (correct) game.multiplier = 4;
   }
@@ -144,37 +136,47 @@ router.post("/ridethebus/guess", (req, res) => {
     if (correct) game.multiplier = 20;
   }
 
-  // Update step
-  if (correct) {
-    game.step++;
-  } else {
-    // Lose — reset everything but show result
+  // -----------------------------------
+  // WRONG GUESS
+  // -----------------------------------
+  if (!correct) {
     req.session.rtb = null;
+
     return res.json({
       correct: false,
       card: cur,
-      message: "Wrong! You fell off the bus!",
+      message: `Wrong! You lost $${game.bet}.`,
       multiplier: 0,
       gameOver: true
     });
   }
 
-  // Win all steps
-  if (game.step > 4) {
-    const winnings = game.multiplier;
+  // -----------------------------------
+  // NEXT STEP
+  // -----------------------------------
+  game.step++;
 
-    req.session.rtb = null; // clear game but keep wallet session
+  // WIN THE GAME
+  if (game.step > 4) {
+    const user = await User.findById(req.session.userId);
+    const winnings = game.bet * game.multiplier;
+
+    user.wallet += winnings;
+    await user.save();
+
+    req.session.wallet = user.wallet;
+    req.session.rtb = null;
 
     return res.json({
       correct: true,
       card: cur,
-      message: "You completed the bus!",
-      multiplier: winnings,
+      message: `You won $${winnings}!`,
+      multiplier: game.multiplier,
       gameOver: true
     });
   }
 
-  // Continue game
+  // CONTINUE GAME
   return res.json({
     correct: true,
     card: cur,
@@ -183,6 +185,33 @@ router.post("/ridethebus/guess", (req, res) => {
   });
 });
 
+// ==================================
+// CASH OUT (FIXED)
+// ==================================
+router.post("/ridethebus/cashout", async (req, res) => {
+  const game = req.session.rtb;
+  if (!game) return res.json({ message: "No game.", gameOver: true });
 
+  const user = await User.findById(req.session.userId);
+
+  let m = game.multiplier;
+  if (!m || m < 1) m = 1;
+
+  const winnings = game.bet * m;
+
+  user.wallet += winnings;
+  await user.save();
+
+  req.session.wallet = user.wallet;
+  req.session.rtb = null;
+
+  return res.json({
+    correct: true,
+    gameOver: true,
+    card: game.previousCard,
+    multiplier: m,
+    message: `You cashed out and won $${winnings}!`
+  });
+});
 
 module.exports = router;
