@@ -257,3 +257,86 @@ nav a {
     margin-top: 15px;
     font-size: 18px;
 }
+
+/* =====================
+   Global layout & spacing tweaks for Part III
+   ===================== */
+
+.page-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 25px 30px;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 16px;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+}
+
+/* titles & subtitles used on multiple pages */
+.page-title {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.page-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #f2f2f2;
+    font-size: 15px;
+}
+
+/* home page hero section */
+.home-hero {
+    text-align: center;
+}
+
+.home-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* outline style for secondary button on home */
+.btn-outline {
+    background: transparent;
+    border: 2px solid #f1c40f;
+}
+
+/* feature page spacing */
+.feature-buttons {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* contact form styling */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.contact-form .form-group {
+    text-align: left;
+}
+
+.contact-form label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.contact-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
