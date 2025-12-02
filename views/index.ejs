@@ -1,11 +1,16 @@
 <%- include('partials/header') %>
 
-<div style="text-align: center;">
-<h2>Welcome to Ontario Tech Casino</h2>
-<p>Play Blackjack, Ride The Bus, 3-Card Poker and more!</p>
+<div class="page-container home-hero">
+  <h2 class="page-title">Welcome to Ontario Tech Casino</h2>
+  <p class="page-subtitle">
+    Create an account, add some (fake) funds, and try your luck in our web-based casino.
+    This project was built for INFR3120 using Node.js, Express, EJS and MongoDB.
+  </p>
 
-<a href="/login" class="btn">Login</a>
-<a href="/register" class="btn">Create Account</a>
+  <div class="home-actions">
+    <a href="/login" class="btn">Login</a>
+    <a href="/register" class="btn btn-outline">Create Account</a>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
