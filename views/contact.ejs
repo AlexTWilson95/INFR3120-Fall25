@@ -1,2 +1,34 @@
-<h1>Contact Page</h1>
-<p>This page was created by Mujahid Marwan Abdulkarim.</p>
+<%- include('partials/header') %>
+
+<div class="page-container">
+  <h2 class="page-title">Contact Us</h2>
+  <p class="page-subtitle">
+    Have questions about Ontario Tech Casino or issues with your account?
+    Send us a message and we'll review it as part of this course project.
+  </p>
+
+  <% if (typeof success !== 'undefined' && success) { %>
+    <p class="success-message">Thanks for reaching out! Your message was submitted successfully.</p>
+  <% } %>
+
+  <form class="contact-form" action="/contact" method="POST">
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input id="name" name="name" type="text" required placeholder="John Doe">
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input id="email" name="email" type="email" required placeholder="johndoe@example.com">
+    </div>
+
+    <div class="form-group">
+      <label for="message">Your Message</label>
+      <textarea id="message" name="message" required placeholder="Tell us how we can help you..."></textarea>
+    </div>
+
+    <button type="submit" class="btn">Send Message</button>
+  </form>
+</div>
+
+<%- include('partials/footer') %>
