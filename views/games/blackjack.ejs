@@ -1,61 +1,209 @@
 <%- include('../partials/header') %>
 
 <div style="text-align: center;">
-<h2>Blackjack</h2>
+    <h2>Blackjack</h2>
 </div>
 
+<!-- ========================= -->
+<!-- BETTING PANEL -->
+<!-- ========================= -->
+<div class="wallet-box" style="margin: auto; width: 320px; text-align: center;">
+    <p style="font-size: 20px;">Place Your Bet</p>
+
+    <select id="bj-bet-amount" class="bet-select">
+        <option value="10">$10</option>
+        <option value="25">$25</option>
+        <option value="50">$50</option>
+        <option value="100">$100</option>
+    </select>
+
+    <button id="bj-place-bet" class="btn game-btn" style="margin-top: 10px;">
+        Place Bet
+    </button>
+
+    <p id="bj-bet-status" style="color: gold; margin-top: 10px;"></p>
+</div>
+
+<!-- Disable buttons until bet is placed -->
+<style>
+.controls button { 
+    opacity: 0.3; 
+    pointer-events: none; 
+}
+.game-message {
+    margin-top: 15px;
+    font-size: 22px;
+    color: gold;
+    text-align: center;
+}
+</style>
+
+<!-- ========================= -->
+<!-- GAME TABLE -->
+<!-- ========================= -->
 <div class="blackjack-table">
+
+    <!-- Game Instructions -->
+    <div class="hand-section">
+        <p style="color: gold; font-size: 18px;">
+            Blackjack — beat the dealer to win! <br>
+            21 is blackjack. Dealer stands on 17.
+        </p>
+    </div>
 
     <!-- Dealer Section -->
     <div class="hand-section">
         <h3>Dealer</h3>
-        <div class="cards-row">
-
-            <% if (dealerCards && dealerCards.length > 0) { %>
-                <% dealerCards.forEach(card => { %>
-                    <div class="card <%= card.color %>">
-                        <%= card.rank %> <span><%- card.suitHtml %></span>
-                    </div>
-                <% }) %>
-            <% } else { %>
-                <p>No cards drawn yet.</p>
-            <% } %>
-
+        <div id="dealer-row" class="cards-row">
+            <p>No cards yet.</p>
         </div>
-        <p class="hand-total">Total: <%= dealerTotal || "??" %></p>
+        <p id="dealer-total" class="hand-total">Total: ??</p>
     </div>
 
     <!-- Player Section -->
     <div class="hand-section">
         <h3>You</h3>
-        <div class="cards-row">
-
-            <% if (playerCards && playerCards.length > 0) { %>
-                <% playerCards.forEach(card => { %>
-                    <div class="card <%= card.color %>">
-                        <%= card.rank %> <span><%- card.suitHtml %></span>
-                    </div>
-                <% }) %>
-            <% } else { %>
-                <p>No cards drawn yet.</p>
-            <% } %>
-
+        <div id="player-row" class="cards-row">
+            <p>No cards yet.</p>
         </div>
-        <p class="hand-total">Total: <%= playerTotal || "??" %></p>
+        <p id="player-total" class="hand-total">Total: ??</p>
     </div>
 
     <!-- Controls -->
     <div class="controls">
         <button class="btn hit-btn">Hit</button>
         <button class="btn stand-btn">Stand</button>
-        <button class="btn restart-btn">Restart</button>
+        <a href="/games/blackjack/restart" class="btn restart-btn">Restart</a>
     </div>
 
 </div>
-<div style="text-align: center;">
+
+<p id="bj-message" class="game-message"></p>
+
+<div style="text-align: center; margin-top: 20px;">
     <a href="/feature/" class="btn">Game Menu</a>
 </div>
 
+<script>
+// =====================================================
+// CREATE CARD ELEMENT
+// =====================================================
+function createCard(card) {
+    let div = document.createElement("div");
+    div.className = `card ${card.color}`;
+    div.innerHTML = `${card.rank} <span>${card.suitHtml}</span>`;
+    return div;
+}
+
+// =====================================================
+// PLACE BET → DEAL CARDS
+// =====================================================
+document.getElementById("bj-place-bet").addEventListener("click", async () => {
+    const bet = document.getElementById("bj-bet-amount").value;
+
+    const res = await fetch("/games/blackjack/bet", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ bet })
+    });
+
+    const data = await res.json();
+    const msg = document.getElementById("bj-bet-status");
+
+    if (!data.success) {
+        msg.innerText = data.message;
+        return;
+    }
+
+    msg.innerText = data.message;
+
+    enableButtons();
+
+    // Render DEALT cards
+    updatePlayerHand(data.playerCards, data.playerTotal);
+    updateDealerHand(data.dealerCards, data.dealerTotal);
+
+    document.getElementById("bj-message").innerText = "";
+});
+
+// =====================================================
+// HIT
+// =====================================================
+document.querySelector(".hit-btn").addEventListener("click", async () => {
+    const res = await fetch("/games/blackjack/hit", { method: "POST" });
+    const data = await res.json();
+
+    // Append new card
+    const playerRow = document.getElementById("player-row");
+    playerRow.appendChild(createCard(data.card));
+
+    document.getElementById("player-total").innerText = "Total: " + data.total;
+
+    if (data.gameOver) {
+        endGame("dealer", 0, 0); // bust = lose bet
+    }
+});
+
+// =====================================================
+// STAND
+// =====================================================
+document.querySelector(".stand-btn").addEventListener("click", async () => {
+    const res = await fetch("/games/blackjack/stand", { method: "POST" });
+    const data = await res.json();
+
+    // Replace dealer cards with full hand
+    updateDealerHand(data.dealerCards, data.dealerTotal);
+
+    endGame(data.winner, data.payout, data.bet);
+});
+
+// =====================================================
+// ENABLE GAME BUTTONS
+// =====================================================
+function enableButtons() {
+    document.querySelectorAll(".controls button").forEach(btn => {
+        btn.style.opacity = 1;
+        btn.style.pointerEvents = "auto";
+    });
+}
+
+// =====================================================
+// UPDATE PLAYER HAND
+// =====================================================
+function updatePlayerHand(cards, total) {
+    const row = document.getElementById("player-row");
+    row.innerHTML = "";
+    cards.forEach(c => row.appendChild(createCard(c)));
+    document.getElementById("player-total").innerText = "Total: " + total;
+}
+
+// =====================================================
+// UPDATE DEALER HAND
+// =====================================================
+function updateDealerHand(cards, total) {
+    const row = document.getElementById("dealer-row");
+    row.innerHTML = "";
+    cards.forEach(c => row.appendChild(createCard(c)));
+    document.getElementById("dealer-total").innerText = "Total: " + total;
+}
+
+// =====================================================
+// END GAME MESSAGE
+// =====================================================
+function endGame(winner, payout, bet) {
+    let text = "";
+
+    if (winner === "player") 
+        text = `🎉 You Win $${payout}!`;
+    else if (winner === "dealer") 
+        text = `💀 Dealer Wins! You lost $${bet}.`;
+    else 
+        text = `🤝 Push! You get $${payout} back.`;
+
+    document.getElementById("bj-message").innerText = text;
+}
+
+</script>
 
 <%- include('../partials/footer') %>
 
