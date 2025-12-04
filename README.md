@@ -51,54 +51,52 @@ At november 13/25 when I commited all these (index page, header and footer, regi
 
 ---
 ## Project Structure
-
-Ontario Tech casino/
-├── app.js                      # Main Express application
-├── package.json                # Dependencies & scripts
-├── package-lock.json
-├── .env                        # Environment variables
-├── .gitignore
-
-├── bin/
-│   └── www                     # Server startup script
-
-├── models/
-│   ├── user.js                 # User schema (username, password, wallet)
-│   └── transaction.js          
-
-├── routes/
-│   ├── index.js                # Home page + feature dashboard
-│   ├── auth.js                 # Register, login, logout, session handling
-│   ├── games.js                # Blackjack + Ride the Bus backend logic
-│   ├── wallet.js               # Deposit + Withdraw
-│   └── users.js                
-
-├── views/
-│   ├── partials/
-│   │   ├── header.ejs          # Navigation bar (dynamic when logged in)
-│   │   └── footer.ejs
-│   │
-│   ├── index.ejs               # Public landing page
-│   ├── login.ejs               # Login form
-│   ├── register.ejs            # Create new account
-│   ├── feature.ejs             # Logged-in game menu
-│   ├── deposit.ejs             # Fake deposit UI
-│   ├── withdraw.ejs            # Wallet withdrawal UI
-│   │
-│   └── games/
-│       ├── blackjack.ejs       # Blackjack game UI
-│       └── ridethebus.ejs      # Ride the Bus game UI
-
-├── public/
-│   ├── css/
-│   │   └── style.css           # Full casino theme
-│   │
-│   ├── javascript/             
-│   │
-│   └── images/                 
-
-└── README.md                   # Project documentation
-
+   Ontario Tech casino/
+   ├── bin/
+   │   └── www
+   │
+   ├── public/
+   │   ├── css/
+   │   │   └── style.css
+   │   │
+   │   ├── javascript/
+   │   │   
+   │   │
+   │   └── images/
+   │       └── (site images)
+   │
+   ├── routes/
+   │   ├── index.js        (Home + feature page redirect)
+   │   ├── auth.js         (Register, Login, Logout, ensureLoggedIn)
+   │   ├── games.js        (Blackjack + Ride the Bus logic)
+   │   ├── wallet.js       (Deposit & withdraw)
+   │   └── users.js
+   │
+   ├── models/
+   │   ├── user.js         (User schema + wallet)
+   │   └── transaction.js  
+   │
+   ├── views/
+   │   ├── partials/
+   │   │   ├── header.ejs  (Dynamic header)
+   │   │   └── footer.ejs
+   │   │
+   │   ├── index.ejs       (Landing page)
+   │   ├── login.ejs       (Login form)
+   │   ├── register.ejs    (Create account)
+   │   ├── feature.ejs     (Dashboard / Game Menu)
+   │   ├── deposit.ejs     (Deposit page)
+   │   ├── withdraw.ejs    (Withdraw page)
+   │   │
+   │   └── games/
+   │       ├── blackjack.ejs
+   │       └── ridethebus.ejs
+   │
+   ├── app.js              (Main server, sessions, MongoDB)
+   ├── package.json
+   ├── package-lock.json
+   ├── .env                (MONGO_URI, SESSION_SECRET)
+   └── README.md
 
 ---
 
