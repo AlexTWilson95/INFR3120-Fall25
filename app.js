@@ -43,6 +43,11 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.locals.loggedIn = !!req.session.userId;
+  next();
+});
+
 // Use routes
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
