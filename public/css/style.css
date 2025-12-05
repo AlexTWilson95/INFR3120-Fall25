@@ -340,3 +340,35 @@ nav a {
     min-height: 120px;
     resize: vertical;
 }
+
+/* ===== FOOTER STYLING ===== */
+
+.site-footer {
+    background: #000;
+    color: gold;
+    padding: 15px 0;
+    text-align: center;
+    margin-top: 40px;
+    border-top: 2px solid gold;
+    font-family: Arial, sans-serif;
+}
+
+.footer-content {
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.footer-title {
+    font-weight: bold;
+    color: gold;
+    font-size: 15px;
+}
+
+.footer-divider {
+    margin: 0 8px;
+    opacity: 0.6;
+}
+
+.footer-copy {
+    color: #cccccc;
+}
