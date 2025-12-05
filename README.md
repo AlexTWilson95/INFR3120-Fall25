@@ -5,7 +5,7 @@ This repository contains our INFR3120 final project, **Ontario Tech Casino**.
 ---
 
 ## Link to live demo
-link: available later
+link: https://ontariotechcasino.onrender.com/
 
 ---
 
