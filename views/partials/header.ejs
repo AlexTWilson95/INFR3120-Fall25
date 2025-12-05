@@ -7,15 +7,18 @@
 </head>
 <body>
   <header>
-    <h1>Ontario Tech Casino</h1>
-      <nav>
-        <a href="<%= loggedIn ? '/feature' : '/' %>">Home</a>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-        <a href="/contact">Contact</a>
-      </nav>
+
+    <div class="header-left">
+      <h1>Ontario Tech Casino</h1>
+      <img src="/images/Ontario Tech Casino Logo.png" class="profile-pic" alt="Casino Profile Icon">
+    </div>
+
+    <nav>
+      <a href="<%= loggedIn ? '/feature' : '/' %>">Home</a>
+      <a href="/login">Login</a>
+      <a href="/register">Register</a>
+      <a href="/contact">Contact</a>
+    </nav>
 
   </header>
   <main>
-
-    
