@@ -50,53 +50,52 @@ This is a first time collaboration using github and the commits are not accurate
 At november 13/25 when I commited all these (index page, header and footer, register, and css) with no changes because I commited them earlier on in the day (hours before). But when Alex did his next commit it delted all of my old ones. So i re-commited them with no changes but they still show up as a commit under my name (so you know what work i did).
 
 ---
-## Project Structure
-   Ontario Tech casino/
+
+## Project Folder Structure
+```bash
+   Ontario_Tech_Casino/
    ├── bin/
    │   └── www
    │
    ├── public/
    │   ├── css/
    │   │   └── style.css
-   │   │
    │   ├── javascript/
-   │   │   
-   │   │
+   │   │   └── main.js
    │   └── images/
    │       └── (site images)
    │
    ├── routes/
-   │   ├── index.js        (Home + feature page redirect)
-   │   ├── auth.js         (Register, Login, Logout, ensureLoggedIn)
-   │   ├── games.js        (Blackjack + Ride the Bus logic)
-   │   ├── wallet.js       (Deposit & withdraw)
+   │   ├── index.js
+   │   ├── auth.js
+   │   ├── games.js
+   │   ├── wallet.js
    │   └── users.js
    │
    ├── models/
-   │   ├── user.js         (User schema + wallet)
-   │   └── transaction.js  
+   │   ├── user.js
+   │   └── transaction.js
    │
    ├── views/
    │   ├── partials/
-   │   │   ├── header.ejs  (Dynamic header)
+   │   │   ├── header.ejs
    │   │   └── footer.ejs
-   │   │
-   │   ├── index.ejs       (Landing page)
-   │   ├── login.ejs       (Login form)
-   │   ├── register.ejs    (Create account)
-   │   ├── feature.ejs     (Dashboard / Game Menu)
-   │   ├── deposit.ejs     (Deposit page)
-   │   ├── withdraw.ejs    (Withdraw page)
-   │   │
+   │   ├── index.ejs
+   │   ├── login.ejs
+   │   ├── register.ejs
+   │   ├── feature.ejs
+   │   ├── deposit.ejs
+   │   ├── withdraw.ejs
    │   └── games/
    │       ├── blackjack.ejs
    │       └── ridethebus.ejs
    │
-   ├── app.js              (Main server, sessions, MongoDB)
+   ├── app.js
    ├── package.json
-   ├── package-lock.json
-   ├── .env                (MONGO_URI, SESSION_SECRET)
+   ├── .env
    └── README.md
+```
+used ExpressJSgenerator 
 
 ---
 
